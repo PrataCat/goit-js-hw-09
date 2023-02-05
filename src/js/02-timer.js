@@ -11,14 +11,7 @@ const secondsNumber = document.querySelector('[data-seconds]');
 startBtn.disabled = true;
 
 let ms = null;
-let timerID = null;
-
-let timerEl = {
-  days: 0,
-  hours: 0,
-  minutes: 0,
-  seconds: 0,
-};
+let counterID = null;
 
 const options = {
   enableTime: true,
@@ -30,15 +23,26 @@ const options = {
       alert('Please choose a date in the future');
       startBtn.disabled = true;
       return;
+    } else {
+      startBtn.disabled = false;
+      const selectedTime = selectedDates[0].getTime();
+
+      startBtn.addEventListener('click', () => {
+        counterID = setInterval(() => {
+          ms = selectedTime - Date.now();
+          if (ms <= 0) {
+            clearInterval(counterID);
+            return;
+          }
+          convertMs(ms);
+          startBtn.disabled = true;
+        }, 1000);
+      });
     }
-    startBtn.disabled = false;
-    ms = selectedDates[0].getTime() - options.defaultDate;
   },
 };
 
 flatpickr(input, options);
-
-startBtn.addEventListener('click', onClickStartBtn);
 
 function convertMs(ms) {
   const second = 1000;
@@ -46,29 +50,14 @@ function convertMs(ms) {
   const hour = minute * 60;
   const day = hour * 24;
 
-  timerEl.days = Math.floor(ms / day);
-  timerEl.hours = Math.floor((ms % day) / hour);
-  timerEl.minutes = Math.floor(((ms % day) % hour) / minute);
-  timerEl.seconds = Math.floor((((ms % day) % hour) % minute) / second);
+  daysNumber.textContent = addZero(Math.floor(ms / day));
+  hoursNumber.textContent = addZero(Math.floor((ms % day) / hour));
+  minutesNumber.textContent = addZero(Math.floor(((ms % day) % hour) / minute));
+  secondsNumber.textContent = addZero(
+    Math.floor((((ms % day) % hour) % minute) / second)
+  );
 }
 
-function onClickStartBtn() {
-  timerID = setInterval(() => {
-    convertMs(ms);
-    const { days, hours, minutes, seconds } = timerEl;
-    daysNumber.textContent = days;
-    hoursNumber.textContent = hours;
-    minutesNumber.textContent = minutes;
-    secondsNumber.textContent = seconds;
-  }, 1000);
-  // stopTimer();
+function addZero(value) {
+  return String(value).padStart(2, 0);
 }
-
-// function startTimer() {}
-// function stopTimer() {
-//   if (ms <= 0) {
-//     clearInterval(timerID);
-//   }
-// }
-
-// function addLeadingZero(value)
