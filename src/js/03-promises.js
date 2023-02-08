@@ -59,9 +59,10 @@ function actingPromise() {
     } else {
       clearInterval(PromiseTimerId);
       promiseСounter = 1;
-      delayTime = 0;
-      stepTime = 0;
-      amountNumber = 0;
+      // delayTime = 0;
+      // stepTime = 0;
+      // amountNumber = 0;
+      formField.reset();
     }
   }, delayTime);
 }
